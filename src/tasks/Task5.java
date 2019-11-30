@@ -20,7 +20,13 @@ public class Task5 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons, Map<Integer, Integer> personAreaIds) {
-    return new ArrayList<>();
+    List<ApiPersonDto> apiPersonDtos = new ArrayList<>();
+    for(int i = 0; i < personAreaIds.size(); i++) {
+      Person person = persons.get(i);
+      Integer areaId = person.getId();
+      apiPersonDtos.add(convert(person, areaId));
+    }
+    return apiPersonDtos;
   }
 
   private static ApiPersonDto convert(Person person, Integer areaId) {
