@@ -4,10 +4,7 @@ import common.Person;
 import common.Task;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -22,7 +19,14 @@ public class Task2 implements Task {
   private static List<Person> combineAndSortWithLimit(Collection<Person> persons1,
                                                       Collection<Person> persons2,
                                                       int limit) {
-    return new ArrayList<>();
+    List<Person> all = new ArrayList<>();
+    all.addAll(persons1);
+    all.addAll(persons2);
+
+    return all.stream().
+            sorted(Comparator.comparing(Person::getCreatedAt))
+            .limit(limit)
+            .collect(Collectors.toList());
   }
 
   @Override
