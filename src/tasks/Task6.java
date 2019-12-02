@@ -5,11 +5,7 @@ import common.Person;
 import common.Task;
 
 import java.time.Instant;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /*
 Имеются
@@ -23,7 +19,23 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
-    return new HashSet<>();
+    //сори за этот страх, но я совершенно не представляю как это сделать компактнее и симпатичнее
+
+    Set<String> regions = new HashSet<>();
+    for(Map.Entry<Integer, Set<Integer>> entry : personAreaIds.entrySet()) {
+      Integer personId = entry.getKey();
+      for (Person person : persons) {
+        if (personId.equals(person.getId())) {
+          for (Area area : areas) {
+            Integer areaId = area.getId();
+            if (entry.getValue().contains(areaId)) {
+              regions.add(person.getFirstName() + " - " + area.getName());
+            }
+          }
+        }
+      }
+    }
+    return regions;
   }
 
   @Override
