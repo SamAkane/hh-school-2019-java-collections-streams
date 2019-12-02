@@ -4,9 +4,7 @@ import common.Person;
 import common.PersonService;
 import common.Task;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
@@ -19,8 +17,25 @@ public class Task1 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> findOrderedPersons(List<Integer> personIds) {
+    //ассимптотика работы n^2:
+    //в каждой итерации внешнего цикла может быть n итераций внутреннего цикла
+
     Set<Person> persons = PersonService.findPersons(personIds);
-    return Collections.emptyList();
+    List<Person> sorted = new ArrayList<>();
+
+    for(int i = 0; i < personIds. size(); i++) {
+      Iterator iterator = persons.iterator();
+
+      while(iterator.hasNext()) {
+        Person person = (Person) iterator.next();
+
+        if(personIds.get(i).equals(person.getId())) {
+          sorted.add(person);
+          break;
+        }
+      }
+    }
+    return sorted;
   }
 
   @Override
