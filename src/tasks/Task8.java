@@ -3,12 +3,7 @@ package tasks;
 import common.Person;
 import common.Task;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,24 +31,16 @@ public class Task8 implements Task {
 
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
-    return getNames(persons).stream().distinct().collect(Collectors.toSet());
+    //в Set и так будут уникальные имена
+    return new HashSet<>(getNames(persons));
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  public String convertPersonToString(Person person) {
-    String result = "";
-    if (person.getSecondName() != null) {
-      result += person.getSecondName();
-    }
-
-    if (person.getFirstName() != null) {
-      result += " " + person.getFirstName();
-    }
-
-    if (person.getSecondName() != null) {
-      result += " " + person.getSecondName();
-    }
-    return result;
+  //это название кажется более понятным
+  public String getFullName(Person person) {
+    //кажется, там была очепятка при получении отчества
+    //ну и этот способ выглядит проще
+    return String.join(" ", person.getSecondName(), person.getFirstName(), person.getMiddleName());
   }
 
   // словарь id персоны -> ее имя
@@ -61,7 +48,7 @@ public class Task8 implements Task {
     Map<Integer, String> map = new HashMap<>(1);
     for (Person person : persons) {
       if (!map.containsKey(person.getId())) {
-        map.put(person.getId(), convertPersonToString(person));
+        map.put(person.getId(), getFullName(person));
       }
     }
     return map;
