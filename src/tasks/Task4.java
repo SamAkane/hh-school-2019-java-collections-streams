@@ -20,10 +20,6 @@ public class Task4 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<ApiPersonDto> convert(List<Person> persons) {
-    /*List<ApiPersonDto> apiPersonDtos = new ArrayList<>();
-    for(Person person : persons) {
-      apiPersonDtos.add(convert(person));
-    }*/
     return persons.stream()
             .map(Task4::convert)
             .collect(Collectors.toList());
