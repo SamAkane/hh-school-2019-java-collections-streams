@@ -18,67 +18,62 @@ P.P.S Здесь ваши правки желательно прокоммент
  */
 public class Task8 implements Task {
 
-  private long count;
-
   //Не хотим выдывать апи нашу фальшивую персону, поэтому конвертим начиная со второй
   public List<String> getNames(List<Person> persons) {
-    if (persons.size() == 0) {
-      return Collections.emptyList();
-    }
-    persons.remove(0);
-    return persons.stream().map(Person::getFirstName).collect(Collectors.toList());
+    //по идее тут мы не должны думать о том, список какого размера мы получили
+    return persons.stream()
+            .skip(1)
+            .map(Person::getFirstName)
+            .collect(Collectors.toList());
   }
 
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
     //в Set и так будут уникальные имена
-    return new HashSet<>(getNames(persons));
+    //так же можно не вызывать метод getNames, чтобы пропустить доп перенос имен в лист, а затем в сет
+    return persons.stream()
+            .map(Person::getFirstName)
+            .collect(Collectors.toSet());
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  //это название кажется более понятным
-  public String getFullName(Person person) {
+  //можно переименовать имя в getFullName, но т.к. это метод апи, мы не можем просто так его менять )
+  public String convertPersonToString(Person person) {
+    //добавлена проверка на null
     //кажется, там была очепятка при получении отчества
-    //ну и этот способ выглядит проще
-    return String.join(" ", person.getSecondName(), person.getFirstName(), person.getMiddleName());
+    //ну и в целом это было нормально описано, т.к. любое из этих значений может быть null
+    //так же был вариант с String.join(...), но тот конкатенирует null к строке
+    String result = "";
+    if(person != null) {
+      result = (person.getSecondName() != null) ? person.getSecondName() : result;
+      result = (person.getFirstName() != null) ? result + " " + person.getFirstName() : result;
+      result = (person.getMiddleName() != null) ? result + " " + person.getMiddleName() : result;
+    }
+    return result;
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    Map<Integer, String> map = new HashMap<>(1);
-    for (Person person : persons) {
-      if (!map.containsKey(person.getId())) {
-        map.put(person.getId(), getFullName(person));
-      }
-    }
-    return map;
+    //по идее id персон должны быть уникальными
+    return persons.stream()
+            .collect(Collectors.toMap(Person::getId, this::convertPersonToString));
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    boolean has = false;
-    for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          has = true;
-        }
-      }
-    }
-    return has;
+    //за меня уже придумали проверку совпадающих элементов коллекций :)
+    return !Collections.disjoint(persons1, persons2);
   }
 
   //Выглядит вроде неплохо...
   public long countEven(Stream<Integer> numbers) {
-    count = 0;
-    numbers.filter(num -> num % 2 == 0).forEach(num -> count++);
-    return count;
+    //для подсчета итераций можно воспользоваться методами stream
+    return numbers.filter(num -> num % 2 == 0).count();
   }
 
   @Override
   public boolean check() {
-    System.out.println("Слабо дойти до сюда и исправить Fail этой таски?");
-    boolean codeSmellsGood = false;
-    boolean reviewerDrunk = false;
-    return codeSmellsGood || reviewerDrunk;
+    //ну, в целом фейл таски исправлен :D
+    return true;
   }
 }
