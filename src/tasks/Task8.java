@@ -3,6 +3,7 @@ package tasks;
 import common.Person;
 import common.Task;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,7 +21,8 @@ public class Task8 implements Task {
 
   //Не хотим выдывать апи нашу фальшивую персону, поэтому конвертим начиная со второй
   public List<String> getNames(List<Person> persons) {
-    //по идее тут мы не должны думать о том, список какого размера мы получили
+    //из плохого было разве что удаление первого элемента списка, которое влечет за собой перестановку всех элементов справа
+    //других вариантов нет
     return persons.stream()
             .skip(1)
             .map(Person::getFirstName)
@@ -30,26 +32,19 @@ public class Task8 implements Task {
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
     //в Set и так будут уникальные имена
-    //так же можно не вызывать метод getNames, чтобы пропустить доп перенос имен в лист, а затем в сет
+    //забыла про удаление первого элемента в getNames -_-
+    //не понимаю что в этом случае не так, если мы должны как-то модифицировать полученный список
     return persons.stream()
             .map(Person::getFirstName)
             .collect(Collectors.toSet());
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
-  //можно переименовать имя в getFullName, но т.к. это метод апи, мы не можем просто так его менять )
   public String convertPersonToString(Person person) {
-    //добавлена проверка на null
-    //кажется, там была очепятка при получении отчества
-    //ну и в целом это было нормально описано, т.к. любое из этих значений может быть null
-    //так же был вариант с String.join(...), но тот конкатенирует null к строке
-    String result = "";
-    if(person != null) {
-      result = (person.getSecondName() != null) ? person.getSecondName() : result;
-      result = (person.getFirstName() != null) ? result + " " + person.getFirstName() : result;
-      result = (person.getMiddleName() != null) ? result + " " + person.getMiddleName() : result;
-    }
-    return result;
+    //
+
+    return Stream.of(person.getSecondName(), person.getFirstName(), person.getMiddleName())
+            .collect(Collectors.joining(" "));
   }
 
   // словарь id персоны -> ее имя
