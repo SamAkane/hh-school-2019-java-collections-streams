@@ -3,9 +3,13 @@ package tasks;
 import common.Area;
 import common.Person;
 import common.Task;
+import org.w3c.dom.ls.LSOutput;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Имеются
@@ -19,23 +23,26 @@ public class Task6 implements Task {
   private Set<String> getPersonDescriptions(Collection<Person> persons,
                                             Map<Integer, Set<Integer>> personAreaIds,
                                             Collection<Area> areas) {
-    //сори за этот страх, но я совершенно не представляю как это сделать компактнее и симпатичнее
 
-    Set<String> regions = new HashSet<>();
-    for(Map.Entry<Integer, Set<Integer>> entry : personAreaIds.entrySet()) {
-      Integer personId = entry.getKey();
-      for (Person person : persons) {
-        if (personId.equals(person.getId())) {
-          for (Area area : areas) {
-            Integer areaId = area.getId();
-            if (entry.getValue().contains(areaId)) {
-              regions.add(person.getFirstName() + " - " + area.getName());
-            }
-          }
-        }
-      }
-    }
-    return regions;
+    //у меня была помощь зала, мне друг подсказывал :(
+    final Map<Integer, Area> areaMap = new ConcurrentHashMap<>();
+    return persons.stream()
+            .flatMap(person -> {
+              final Set<Integer> areaIds = personAreaIds.get(person.getId());
+              if (areaIds != null) {
+                return areaIds.stream()
+                        .map(id -> areaMap.computeIfAbsent(id, i ->
+                                areas.stream()
+                                        .filter(area -> area.getId() != null && area.getId().equals(i))
+                                        .findFirst()
+                                        .orElse(null)))
+                        .filter(Objects::nonNull)
+                        .map(area -> person.getFirstName() + " - " + area.getName());
+              } else {
+                return Stream.empty();
+              }
+            })
+            .collect(Collectors.toSet());
   }
 
   @Override
