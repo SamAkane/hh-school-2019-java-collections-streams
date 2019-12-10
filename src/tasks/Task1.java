@@ -4,7 +4,6 @@ import common.Person;
 import common.PersonService;
 import common.Task;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,13 +17,15 @@ public class Task1 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> findOrderedPersons(List<Integer> personIds) {
-    //с подсчетом сложности у меня не очень (
-    //так, как map будет последовательно проходить по списку - ставлю на сложность O(n)
-    //и тут я опять решила считерить ибо не представляю как я могу заюзать persons
-    //Set<Person> persons = PersonService.findPersons(personIds);
+    //надеюсь так получилось лучше
+    //асимптотика O(n)
+
+    Map<Integer, Person> personMap = PersonService.findPersons(personIds).stream()
+            .collect(Collectors.toMap(Person::getId, person -> person));
 
     return personIds.stream()
-            .map(id -> new Person(id, "first " + id, "second " + id, "middle " + id, Instant.now()))
+            .map(personMap::get)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
   }
 
