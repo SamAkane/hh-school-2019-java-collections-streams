@@ -5,6 +5,7 @@ import common.Task;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,19 +32,16 @@ public class Task8 implements Task {
 
   //ну и различные имена тоже хочется
   public Set<String> getDifferentNames(List<Person> persons) {
-    //в Set и так будут уникальные имена
-    //забыла про удаление первого элемента в getNames -_-
-    //не понимаю что в этом случае не так, если мы должны как-то модифицировать полученный список
-    return persons.stream()
-            .map(Person::getFirstName)
-            .collect(Collectors.toSet());
+    //знаю, что уже не учитывается, но поняла что не так
+    return new HashSet<>(getNames(persons));
   }
 
   //Для фронтов выдадим полное имя, а то сами не могут
   public String convertPersonToString(Person person) {
-    //
+    //знаю, что уже не учитывается, но добавила проверку на null
 
     return Stream.of(person.getSecondName(), person.getFirstName(), person.getMiddleName())
+            .filter(Objects::nonNull)
             .collect(Collectors.joining(" "));
   }
 
@@ -56,7 +54,10 @@ public class Task8 implements Task {
 
   // есть ли совпадающие в двух коллекциях персоны?
   public boolean hasSamePersons(Collection<Person> persons1, Collection<Person> persons2) {
-    //за меня уже придумали проверку совпадающих элементов коллекций :)
+    // не смогла осилить эту задачку. Пробовала с конвертацией одной коллекции в мапу, но потом сильно
+    //запуталась с обходом второй коллекции
+
+    //disjoint как-то сложно работает! по крайней мере выглядит страшно
     return !Collections.disjoint(persons1, persons2);
   }
 

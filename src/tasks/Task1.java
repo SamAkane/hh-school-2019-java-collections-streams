@@ -17,7 +17,7 @@ public class Task1 implements Task {
 
   // !!! Редактируйте этот метод !!!
   private List<Person> findOrderedPersons(List<Integer> personIds) {
-    //надеюсь так получилось лучше
+    //надеюсь так получилось лучше, но я помню что уже все с этой таской
     //асимптотика O(n)
 
     Map<Integer, Person> personMap = PersonService.findPersons(personIds).stream()
